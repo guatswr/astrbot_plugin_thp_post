@@ -1,5 +1,5 @@
 {
-  "api_base_url": {"description":"云端服务地址（HTTPS，不含 /api/v1）","type":"string","default":""},
+  "api_base_url": {"description":"服务根地址（HTTP/HTTPS，不含 /api/v1）","type":"string","default":""},
   "ingest_token": {"description":"插件上传凭据，请勿分享配置截图","type":"string","default":"","secret":true},
   "event_id": {"description":"本场活动 ID","type":"string","default":""},
   "source_instance_id": {"description":"稳定接入实例 ID；重启/迁移时保持不变","type":"string","default":"napcat_main"},

@@ -31,10 +31,8 @@ def configuration_error(config):
         port = base.port
     except ValueError:
         return "THP api_base_url 不是有效的服务地址"
-    if base.scheme != "https" and not (
-        base.scheme == "http" and hostname in {"127.0.0.1", "localhost"}
-    ):
-        return "THP api_base_url 必须使用 HTTPS（本机调试除外）"
+    if base.scheme not in {"http", "https"}:
+        return "THP api_base_url 必须使用 HTTP 或 HTTPS"
     if (
         not hostname
         or (port is not None and port < 1)

@@ -27,7 +27,9 @@ def config():
 def test_configuration_starts_disabled_until_complete():
     assert configuration_error({"api_base_url": ""})
     assert configuration_error({**config(), "allowed_group_ids": []})
-    assert configuration_error({**config(), "api_base_url": "http://cloud.example"})
+    assert configuration_error({**config(), "api_base_url": "http://cloud.example"}) is None
+    assert configuration_error({**config(), "api_base_url": "http://192.0.2.10:8080"}) is None
+    assert configuration_error({**config(), "api_base_url": "ftp://cloud.example"})
     assert configuration_error({**config(), "api_base_url": "https://example.test/api/v1"})
     assert configuration_error({**config(), "api_base_url": "https://[invalid"})
     assert configuration_error(config()) is None
