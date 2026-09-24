@@ -1,0 +1,12 @@
+{
+  "api_base_url": {"description":"云端服务地址（HTTPS，不含 /api/v1）","type":"string","default":""},
+  "ingest_token": {"description":"插件上传凭据，请勿分享配置截图","type":"string","default":"","secret":true},
+  "event_id": {"description":"本场活动 ID","type":"string","default":""},
+  "source_instance_id": {"description":"稳定接入实例 ID；重启/迁移时保持不变","type":"string","default":"napcat_main"},
+  "allowed_group_ids": {"description":"允许投稿的 QQ 群号（字符串列表）","type":"list","default":[]},
+  "max_length": {"description":"正文上限（不能超过云端 300 字）","type":"int","default":300},
+  "user_cooldown": {"description":"同一观众投稿冷却秒数","type":"int","default":10},
+  "upload_timeout": {"description":"上传总超时秒数","type":"int","default":10},
+  "outbox_capacity": {"description":"待上传队列容量","type":"int","default":1000},
+  "outbox_expiry": {"description":"稿件补传有效期（秒）","type":"int","default":1800}
+}

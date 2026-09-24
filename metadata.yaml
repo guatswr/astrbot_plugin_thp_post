@@ -1,0 +1,10 @@
+name: astrbot_plugin_thp_post
+display_name: THP 现场投稿
+short_desc: QQ 群发送 /投稿 后自动上传并展示到 THP Post 大屏。
+desc: 通过 NapCat / OneBot v11 接收 QQ 群纯文本投稿，可靠上传至 THP Post 后端，并自动进入主持页和现场大屏。
+version: v0.1.0
+author: guatswr
+repo: https://github.com/guatswr/astrbot_plugin_thp_post
+support_platforms:
+  - aiocqhttp
+astrbot_version: ">=4.28,<5"

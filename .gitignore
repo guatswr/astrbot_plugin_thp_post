@@ -1,0 +1,23 @@
+# Python environments and caches
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+coverage/
+
+# Local plugin settings, upload queue and generated packages
+.env
+.env.*
+!.env.example
+*.local.json
+outbox.db*
+*.db
+*.db-*
+plugin_data/
+data/
+artifacts/
+*.zip
+*.log
+.DS_Store
