@@ -4,7 +4,14 @@ import time
 
 import httpx
 import pytest
-from astrbot_plugin_thp_post.core import Delivery, Outbox, Rejected, is_candidate, parse_event
+from astrbot_plugin_thp_post.core import (
+    Delivery,
+    Outbox,
+    Rejected,
+    configuration_error,
+    is_candidate,
+    parse_event,
+)
 
 
 def config():
@@ -15,6 +22,16 @@ def config():
         "api_base_url": "https://example.test",
         "ingest_token": "test",
     }
+
+
+def test_configuration_starts_disabled_until_complete():
+    assert configuration_error({"api_base_url": ""})
+    assert configuration_error({**config(), "allowed_group_ids": []})
+    assert configuration_error({**config(), "api_base_url": "http://cloud.example"})
+    assert configuration_error({**config(), "api_base_url": "https://example.test/api/v1"})
+    assert configuration_error({**config(), "api_base_url": "https://[invalid"})
+    assert configuration_error(config()) is None
+    assert configuration_error({**config(), "api_base_url": "http://127.0.0.1:8080"}) is None
 
 
 def event(text="/投稿 你好🎉", **kw):

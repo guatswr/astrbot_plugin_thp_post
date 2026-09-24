@@ -11,12 +11,41 @@ import time
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
+from urllib.parse import urlparse
 
 import httpx
 
 
 class Rejected(ValueError):
     pass
+
+
+def configuration_error(config):
+    """Explain why uploads must stay disabled until the next plugin reload."""
+    required = ("api_base_url", "ingest_token", "event_id", "source_instance_id", "allowed_group_ids")
+    if not all(config.get(key) for key in required):
+        return "请先配置 THP 投稿服务地址、上传凭据、活动 ID、实例 ID 和群白名单，保存后重载插件"
+    try:
+        base = urlparse(str(config["api_base_url"]))
+        hostname = base.hostname
+        port = base.port
+    except ValueError:
+        return "THP api_base_url 不是有效的服务地址"
+    if base.scheme != "https" and not (
+        base.scheme == "http" and hostname in {"127.0.0.1", "localhost"}
+    ):
+        return "THP api_base_url 必须使用 HTTPS（本机调试除外）"
+    if (
+        not hostname
+        or (port is not None and port < 1)
+        or base.username
+        or base.password
+        or base.query
+        or base.fragment
+        or base.path not in {"", "/"}
+    ):
+        return "THP api_base_url 仅填写服务域名，不含路径或凭据"
+    return None
 
 
 def is_candidate(raw):

@@ -2,14 +2,13 @@ import asyncio
 import contextlib
 import json
 import time
-from urllib.parse import urlparse
 
 from astrbot.api import AstrBotConfig, logger
 from astrbot.api.event import AstrMessageEvent, MessageChain, filter
 from astrbot.api.message_components import Plain, Reply
 from astrbot.api.star import Context, Star, StarTools
 
-from .core import Delivery, Outbox, Rejected, is_candidate, parse_event
+from .core import Delivery, Outbox, Rejected, configuration_error, is_candidate, parse_event
 
 
 class SubmissionFilter(filter.CustomFilter):
@@ -26,20 +25,13 @@ class THPPost(Star):
         self.worker = None
         self.outbox = None
         self.delivery = None
+        self.config_error = None
 
     async def initialize(self):
-        base = urlparse(self.config.get("api_base_url", ""))
-        if base.scheme != "https" and not (
-            base.scheme == "http" and base.hostname in {"127.0.0.1", "localhost"}
-        ):
-            raise ValueError("THP api_base_url 必须使用 HTTPS（本机调试除外）")
-        if base.username or base.password or base.query or base.fragment or base.path not in {"", "/"}:
-            raise ValueError("THP api_base_url 仅填写服务域名，不含路径或凭据")
-        if not all(
-            self.config.get(k)
-            for k in ("ingest_token", "event_id", "source_instance_id", "allowed_group_ids")
-        ):
-            raise ValueError("请先配置 THP 投稿服务、活动和群白名单")
+        self.config_error = configuration_error(self.config)
+        if self.config_error:
+            logger.warning(f"THP 投稿插件已加载，但尚未启用：{self.config_error}")
+            return
         self.outbox = Outbox(
             StarTools.get_data_dir("astrbot_plugin_thp_post") / "outbox.db",
             capacity=int(self.config.get("outbox_capacity", 1000)),
@@ -59,6 +51,10 @@ class THPPost(Star):
     @filter.custom_filter(SubmissionFilter, priority=100)
     async def submission(self, event: AstrMessageEvent):
         if event.get_platform_name() != "aiocqhttp":
+            return
+        if self.config_error or self.outbox is None:
+            event.stop_event()
+            await event.send(event.plain_result("投稿服务尚未就绪，请联系管理员"))
             return
         try:
             payload = parse_event(dict(event.message_obj.raw_message), self.config)

@@ -12,7 +12,7 @@
 1. 将插件目录安装到 AstrBot `data/plugins/astrbot_plugin_thp_post`，或使用其 WebUI 安装工程生成的 ZIP。
 2. 安装 requirements.txt 依赖；AstrBot WebUI 常规插件安装流程会处理依赖。
 3. 在插件配置填写云端 HTTPS 根地址、上传凭据、活动 ID、稳定实例 ID 和允许群列表。
-4. 初次没有配置时会拒绝启动；配置保存后重载插件。凭据输入默认遮蔽。
+4. 初次没有配置时插件可以加载，但投稿与后台上传保持停用；配置保存后重载插件才会启用。凭据输入默认遮蔽。公网服务地址必须使用 HTTPS；仅本机调试可用 `http://localhost` 或 `http://127.0.0.1`。
 5. NapCat 使用 OneBot v11 反向 WebSocket 接入 AstrBot，消息上报格式必须为**数组**。
 6. AstrBot 会话插件管理应允许此插件，机器人必须能接收目标群消息；不用要求观众 @ 机器人。
 
